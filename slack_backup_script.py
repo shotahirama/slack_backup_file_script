@@ -69,7 +69,7 @@ class SlackBackup(object):
 
     def run(self):
         fileslist = self.sc.api_call("files.list")
-        fls = fileslist["files"][:5]
+        fls = fileslist["files"]
         for fl in fls:
             self.download_file(fl)
         maxpage = int(fileslist["paging"]["pages"])
