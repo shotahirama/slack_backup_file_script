@@ -77,14 +77,14 @@ class SlackBackup(object):
         backup_delete_list = []
         fileslist = self.sc.api_call("files.list")
         for fl in fileslist["files"]:
-            if (datetime.now() - datetime.fromtimestamp(fl["timestamp"])).days > day_interval:
+            if (datetime.now() - datetime.fromtimestamp(fl["timestamp"])).days >= day_interval:
                 backup_delete_list.append(fl)
                 # self.download_file(fl)
         maxpage = int(fileslist["paging"]["pages"])
         for i in range(2, maxpage + 1):
             fileslist = self.sc.api_call("files.list", page=i)
             for fl in fileslist["files"]:
-                if (datetime.now() - datetime.fromtimestamp(fl["timestamp"])).days > day_interval:
+                if (datetime.now() - datetime.fromtimestamp(fl["timestamp"])).days >= day_interval:
                     backup_delete_list.append(fl)
                     # self.download_file(fl)
         cant_download_filelist = []
