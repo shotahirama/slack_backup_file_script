@@ -25,7 +25,8 @@ class SlackBackup(object):
         self.run(day_interval=day_interval)
 
     def make_backup_directory(self, backup_dirname):
-        self.downloads_dir = backup_dirname + "_" + datetime.now().strftime("%Y%m%d_%H%M%S")
+        # self.downloads_dir = backup_dirname + "_" + datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.downloads_dir = backup_dirname
         if not os.path.exists(self.downloads_dir):
             os.makedirs(self.downloads_dir)
         print("Backup Directory:", self.downloads_dir)
@@ -63,7 +64,7 @@ class SlackBackup(object):
         try:
             filedata = requests.get(downfile["url_private_download"], headers={"Authorization": "Bearer %s" % self.token},
                                     stream=True)
-            print("Downloading ...", downfile["name"])
+            # print("Downloading ...", downfile["name"])
             with open(os.path.join(self.downloads_dir,
                                    datetime.fromtimestamp(int(downfile["timestamp"])).strftime("%Y%m%d_%H%M%S") + "_" +
                                            downfile["name"]), "wb") as f:
@@ -91,6 +92,10 @@ class SlackBackup(object):
             try:
                 private_url = fl["url_private_download"]
                 self.download_file(fl)
+                rc = self.sc.api_call("files.delete",file=fl["id"])
+                if not rc["ok"]:
+                    for ch in fl["channels"]:
+                        print("Delete Failed ...",fl["name"],self.channels_dict[ch])
             except:
                 cant_download_filelist.append(fl)
 
